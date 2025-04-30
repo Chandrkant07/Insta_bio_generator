@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instagram Bio Generator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        /* CSS Styles from your style.css */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+            background: #f5f5f5;
+            color: #333;
+            padding: 0; /* Remove body padding if container manages it */
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto; /* Center container */
+            background: white;
+            padding: 2rem 1rem; /* Padding inside container */
+            border-radius: 12px; /* Rounded corners for container */
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08); /* Softer shadow */
+            margin-top: 20px; /* Add some space at the top */
+            margin-bottom: 20px; /* Add some space at the bottom */
+        }
+
+        /* --- Ad Container Styling --- */
+         .ad-container-468x60 {
+            width: 468px; /* Fixed width */
+            height: 60px;  /* Fixed height */
+            max-width: 100%; /* Responsive constraint */
+            margin: 0 auto 2rem auto; /* Center horizontally, add bottom margin */
+            /* Removed background/border placeholders as ad should fill */
+            /* background: #f0f0f0; */
+            /* border: 1px dashed #ccc; */
+            display: flex; /* Helps if ad script doesn't fill perfectly */
+            align-items: center;
+            justify-content: center;
+            overflow: hidden; /* Ensure ad content stays within bounds */
+        }
+        /* Removed placeholder text style as it's no longer needed */
+        /* .ad-container-468x60 p { ... } */
+
+
+        header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            color: #333;
+            margin-bottom: 0.5rem;
+            /* Applying gradient directly to text */
+            background: linear-gradient(45deg, #833ab4, #fd1d1d, #fcb045);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: inline-block; /* Needed for background-clip */
+        }
+
+        header p {
+            color: #666;
+        }
+
+        .input-section {
+            margin-bottom: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #444;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #833ab4; /* Use a gradient color stop */
+            box-shadow: 0 0 0 3px rgba(131, 58, 180, 0.15); /* Focus ring */
+        }
+
+        .tone-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .tone-btn {
+            padding: 0.5rem 1rem;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s;
+            color: #555;
+            font-weight: 500;
+        }
+        .tone-btn:hover {
+             border-color: #bbb;
+             background-color: #f8f8f8;
+        }
+
+        .tone-btn.active {
+            background: #833ab4;
+            color: white;
+            border-color: #833ab4;
+            font-weight: 600;
+        }
+
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+             cursor: pointer;
+             font-weight: 500;
+             color: #444;
+             margin-top: 0.5rem; /* Add some space above */
+        }
+         .checkbox-container input[type="checkbox"] {
+             width: 16px;
+             height: 16px;
+             cursor: pointer;
+         }
+
+        .generate-btn {
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(45deg, #833ab4, #fd1d1d);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+             margin-top: 1rem; /* Ensure space above button */
+        }
+
+        .generate-btn:hover {
+            transform: translateY(-2px);
+             box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+         .generate-btn:disabled {
+             background: #ccc;
+             cursor: not-allowed;
+             transform: none;
+             box-shadow: none;
+         }
+
+
+        .output-section {
+             border-top: 1px solid #eee; /* Add separator line */
+             padding-top: 2rem; /* Space above title */
+        }
+
+        .output-section h2 {
+            text-align: center;
+            margin-bottom: 1.5rem; /* More space below title */
+            color: #333;
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+         .bio-suggestions {
+             min-height: 100px; /* Minimum height */
+             padding: 1rem; /* Padding inside */
+             background-color: #f8f9fa; /* Light background for area */
+             border-radius: 8px; /* Rounded corners */
+             border: 1px solid #e9ecef; /* Subtle border */
+         }
+         .bio-suggestions p.info { /* Style for placeholder text */
+             text-align: center;
+             color: #6c757d;
+             padding: 1rem 0;
+         }
+         .bio-suggestions p.error { /* Style for error message */
+            color: #dc3545;
+            font-weight: 500;
+            text-align: center;
+         }
+
+        .bio-suggestion {
+            background: #ffffff; /* White background for each suggestion */
+            padding: 1rem;
+            padding-right: 70px; /* Space for copy button */
+            border: 1px solid #e9ecef; /* Border for each suggestion */
+            border-radius: 6px;
+            margin-bottom: 1rem;
+            position: relative;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            line-height: 1.5; /* Improve readability */
+        }
+
+        .bio-suggestion:last-child {
+            margin-bottom: 0;
+        }
+         .bio-suggestion p { /* Style for the actual bio text */
+             margin: 0;
+             color: #495057;
+         }
+
+        .copy-btn {
+            position: absolute;
+            top: 50%; /* Center vertically */
+            transform: translateY(-50%); /* Adjust vertical centering */
+            right: 0.75rem; /* Position from right */
+            padding: 0.3rem 0.8rem;
+            background: #833ab4;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: background-color 0.2s ease;
+        }
+
+        .copy-btn:hover {
+            background: #6d2e9e; /* Darker purple on hover */
+        }
+        .copy-btn.copied { /* Style when copied */
+            background-color: #28a745; /* Green */
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1.5rem 1rem; /* Adjust padding */
+                margin-top: 10px;
+                margin-bottom: 10px;
+            }
+
+            header h1 {
+                font-size: 2rem;
+            }
+
+             /* Adjust ad container for smaller screens if needed */
+             .ad-container-468x60 {
+                /* Keep width 468px but allow container to shrink */
+                /* Or use a responsive ad size if available */
+             }
+        }
+
+        @media (max-width: 480px) {
+             /* Make ad container full width on very small screens */
+            .ad-container-468x60 {
+                width: 100%;
+                height: auto; /* Adjust height if needed or let iframe handle */
+                min-height: 50px; /* Minimum height */
+            }
+
+            header h1 { font-size: 1.8rem; }
+            .tone-buttons { gap: 0.3rem; }
+            .tone-btn { padding: 0.4rem 0.8rem; font-size: 0.85rem; }
+            .generate-btn { font-size: 1rem; padding: 0.9rem; }
+            .copy-btn { font-size: 0.8rem; padding: 0.25rem 0.6rem; }
+            .bio-suggestion { padding-right: 60px; } /* Less space for smaller button */
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+
+        <!-- Ad Container for 468x60 Ad - Placed at the top -->
+        <div class="ad-container-468x60">
+            <!-- ===== AD CODE PLACED HERE ===== -->
+            <script type="text/javascript">
+                atOptions = {
+                    'key' : '504ab14716efc79e51f878038aca1d11',
+                    'format' : 'iframe',
+                    'height' : 60,
+                    'width' : 468,
+                    'params' : {}
+                };
+            </script>
+            <script type="text/javascript" src="//www.highperformanceformat.com/504ab14716efc79e51f878038aca1d11/invoke.js"></script>
+            <!-- ===== END AD CODE ===== -->
+            <!-- Removed the placeholder text <p>Advertisement</p> as the script will fill this space -->
+        </div>
+
+        <header>
+            <h1>Instagram Bio Generator</h1>
+            <p>Create the perfect bio for your Instagram profile</p>
+        </header>
+
+        <main>
+            <div class="input-section">
+                <div class="form-group">
+                    <label for="name">Name:</label>
+                    <input type="text" id="name" placeholder="Enter your name">
+                </div>
+
+                <div class="form-group">
+                    <label for="profession">Profession:</label>
+                    <input type="text" id="profession" placeholder="What do you do?">
+                </div>
+
+                <div class="form-group">
+                    <label for="interests">Interests (comma-separated):</label>
+                    <input type="text" id="interests" placeholder="photography, travel, fitness...">
+                </div>
+
+                <div class="form-group">
+                    <label>Tone:</label>
+                    <div class="tone-buttons">
+                        <button class="tone-btn active" data-tone="professional">Professional</button>
+                        <button class="tone-btn" data-tone="cool">Cool</button>
+                        <button class="tone-btn" data-tone="funny">Funny</button>
+                        <button class="tone-btn" data-tone="aesthetic">Aesthetic</button>
+                        <!-- Add more tones if desired -->
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="checkbox-container">
+                        <input type="checkbox" id="includeEmojis" checked>
+                        Include Emojis
+                    </label>
+                </div>
+
+                <button id="generateBtn" class="generate-btn">Generate Bios</button>
+            </div>
+
+            <div class="output-section">
+                <h2>Your Bio Suggestions</h2>
+                <div id="bioSuggestions" class="bio-suggestions">
+                    <p class="info">Click "Generate Bios" to see suggestions.</p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Main Application Script Logic -->
+    <script>
+        // Constants
+        // WARNING: Storing API keys directly in client-side code is INSECURE!
+        // For production, use a backend proxy to protect your key.
+        const API_KEY = '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';
+        const API_URL = 'https://openrouter.ai/api/v1/chat/completions';
+
+        // DOM Elements
+        const nameInput = document.getElementById('name');
+        const professionInput = document.getElementById('profession');
+        const interestsInput = document.getElementById('interests');
+        const includeEmojisCheckbox = document.getElementById('includeEmojis');
+        const generateBtn = document.getElementById('generateBtn');
+        const bioSuggestionsDiv = document.getElementById('bioSuggestions');
+        const toneButtons = document.querySelectorAll('.tone-btn');
+
+        // Event Listeners
+        generateBtn.addEventListener('click', generateBios);
+        toneButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                toneButtons.forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+            });
+        });
+
+        async function generateBios() {
+            const name = nameInput.value.trim();
+            const profession = professionInput.value.trim();
+            const interests = interestsInput.value.trim();
+            const includeEmojis = includeEmojisCheckbox.checked;
+            const selectedToneElement = document.querySelector('.tone-btn.active');
+
+            if (!selectedToneElement) {
+                 alert('Please select a tone.');
+                 return;
+            }
+            const selectedTone = selectedToneElement.dataset.tone;
+
+            if (!name && !profession && !interests) {
+                alert('Please fill in at least one field (Name, Profession, or Interests)');
+                return;
+            }
+
+            generateBtn.disabled = true;
+            generateBtn.textContent = 'Generating...';
+            bioSuggestionsDiv.innerHTML = '<p class="info">Generating suggestions...</p>';
+
+            try {
+                let prompt = Generate 3 distinct and creative Instagram bio suggestions based on the following details:\n;
+                if (name) prompt += - Name: ${name}\n;
+                if (profession) prompt += - Profession/Role: ${profession}\n;
+                if (interests) prompt += - Interests: ${interests}\n;
+                prompt += - Desired Tone: ${selectedTone}\n;
+                prompt += - Emojis: ${includeEmojis ? 'Yes, include 1-3 relevant emojis per bio' : 'No emojis'}\n\n;
+                prompt += Constraints:\n;
+                prompt += - Each bio MUST be under 150 characters.\n;
+                prompt += - Bios should be suitable for an Instagram profile.\n;
+                prompt += - Focus on being catchy and reflective of the tone.\n;
+                prompt += - If profession is mentioned, integrate it naturally.\n;
+                prompt += - Output ONLY the 3 bio suggestions, each on a new line. Do not add numbering, greetings, or extra text.;
+
+                console.log("Sending prompt to API:", prompt);
+
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': Bearer ${API_KEY},
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        'model': 'mistralai/mistral-7b-instruct:free',
+                        'messages': [ { 'role': 'user', 'content': prompt } ],
+                        'max_tokens': 200
+                    })
+                });
+
+                 console.log("API Response Status:", response.status);
+
+                if (!response.ok) {
+                    let errorMsg = API Error (${response.status});
+                    try { const errorData = await response.json(); console.error("API Error Details:", errorData); errorMsg += : ${errorData.error?.message || response.statusText}; } catch (e) { errorMsg += : ${response.statusText}; }
+                    throw new Error(errorMsg);
+                }
+
+                const data = await response.json();
+                 console.log("API Response Data:", data);
+
+                if (!data.choices || data.choices.length === 0 || !data.choices[0].message || !data.choices[0].message.content) {
+                     throw new Error("Received invalid or empty response from API.");
+                 }
+                const rawContent = data.choices[0].message.content;
+                console.log("Raw AI Response:", rawContent);
+
+                const bios = parseBiosFromResponse(rawContent);
+
+                if (bios.length === 0) {
+                     console.warn("Parsing failed to extract bios from:", rawContent);
+                     bioSuggestionsDiv.innerHTML = <p class="error">Couldn't extract bios from the response. Raw response logged to console.</p>;
+                 } else {
+                    displayBios(bios);
+                 }
+
+            } catch (error) {
+                console.error('Error generating bios:', error);
+                bioSuggestionsDiv.innerHTML = <p class="error">Error: ${error.message}. Please check console or try again.</p>;
+            } finally {
+                generateBtn.disabled = false;
+                generateBtn.textContent = 'Generate Bios';
+            }
+        }
+
+        function parseBiosFromResponse(content) {
+            if (!content) return [];
+            return content.split('\n')
+                .map(line => line.trim())
+                .filter(line => line.length > 5 && line.length <= 160)
+                .filter(line => !line.toLowerCase().startsWith("here are") && !line.toLowerCase().startsWith("sure,") && !line.toLowerCase().includes(":") && !line.match(/^\d+\.\s/))
+                .map(line => line.replace(/^["'-]\s*/, ''))
+                .slice(0, 5);
+        }
+
+        function displayBios(bios) {
+            bioSuggestionsDiv.innerHTML = '';
+            if (!bios || bios.length === 0) {
+                 bioSuggestionsDiv.innerHTML = '<p class="info">No suggestions generated. Try adjusting your inputs.</p>';
+                 return;
+            }
+            bios.slice(0, 3).forEach((bio, index) => {
+                const bioElement = document.createElement('div');
+                bioElement.className = 'bio-suggestion';
+                const bioTextElement = document.createElement('p');
+                bioTextElement.textContent = bio;
+                bioElement.appendChild(bioTextElement);
+                const copyBtn = document.createElement('button');
+                copyBtn.className = 'copy-btn';
+                copyBtn.textContent = 'Copy';
+                copyBtn.onclick = () => copyBioToClipboard(bio, copyBtn);
+                bioElement.appendChild(copyBtn);
+                bioSuggestionsDiv.appendChild(bioElement);
+            });
+        }
+
+        function copyBioToClipboard(bioText, buttonElement) {
+            navigator.clipboard.writeText(bioText).then(() => {
+                const originalText = buttonElement.textContent;
+                buttonElement.textContent = 'Copied!';
+                buttonElement.classList.add('copied');
+                buttonElement.disabled = true;
+                setTimeout(() => {
+                    buttonElement.textContent = originalText;
+                    buttonElement.classList.remove('copied');
+                    buttonElement.disabled = false;
+                }, 2000);
+            }).catch(err => {
+                console.error('Failed to copy bio: ', err);
+                alert('Failed to copy bio to clipboard.');
+            });
+        }
+    </script>
+
+    <!-- Note: The ad scripts were moved into the div.ad-container-468x60 above -->
+
+</body>
+</html>
